@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz da Biotecnologia — Ensino Médio</title>
+  <style>
+    :root {
+      --bg-color: #000;
+      --text-color: #dff;
+      --accent: #00ffc8;
+      --accent2: #00ff7f;
+      --card-bg: rgba(10,10,10,0.9);
+      --correct: #00ff99;
+      --wrong: #ff0055;
+    }
+
+    body.light {
+      --bg-color: #f4f4f4;
+      --text-color: #111;
+      --accent: #00a27a;
+      --accent2: #009688;
+      --card-bg: #fff;
+    }
+
+    body {
+      font-family: "Orbitron", "Poppins", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.5s, color 0.5s;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 25% 30%, rgba(0,255,200,0.15), transparent 60%),
+                  radial-gradient(circle at 75% 70%, rgba(0,255,100,0.15), transparent 60%);
+      animation: moveBg 12s infinite alternate ease-in-out;
+      z-index: 0;
+    }
+
+    @keyframes moveBg {
+      from { transform: translate(-5%, -5%) scale(1); }
+      to { transform: translate(5%, 5%) scale(1.1); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      background: var(--card-bg);
+      padding: 35px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 0 25px var(--accent), 0 0 50px rgba(0,255,100,0.25);
+      border: 1px solid rgba(0,255,200,0.2);
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent2);
+      font-size: 1.8em;
+      margin-bottom: 15px;
+    }
+
+    .toggle-theme {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      border-radius: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.8em;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-theme:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .progress {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 10px var(--accent);
+      transition: width 0.4s ease;
+    }
+
+    .question {
+      font-size: 1.2em;
+      color: var(--accent2);
+      margin: 20px 0;
+      text-shadow: 0 0 8px var(--accent2);
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option {
+      background: rgba(0,255,200,0.1);
+      border: 1px solid var(--accent);
+      color: var(--text-color);
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1em;
+      text-align: left;
+      text-shadow: 0 0 5px var(--accent);
+    }
+
+    .option:hover {
+      background: rgba(0,255,200,0.25);
+      box-shadow: 0 0 10px var(--accent);
+      transform: scale(1.03);
+    }
+
+    #next-btn, #retry-btn {
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      color: #000;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 25px;
+      width: 100%;
+      font-weight: bold;
+      font-size: 1em;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px var(--accent);
+    }
+
+    #next-btn:hover, #retry-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px var(--accent2);
+    }
+
+    #result {
+      font-size: 1.2em;
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent);
+      margin-top: 15px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px var(--accent); }
+      to { text-shadow: 0 0 20px var(--accent2), 0 0 40px var(--accent); }
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 0.8em;
+      color: var(--accent2);
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="toggle-theme" id="themeToggle">🌙 Modo Claro</button>
+    <h1>Quiz da Biotecnologia — Ensino Médio</h1>
+
+    <div class="progress"><div id="progress-bar" class="progress-bar"></div></div>
+
+    <div id="quiz">
+      <div id="question-container">
+        <div id="question" class="question"></div>
+        <div id="options" class="options"></div>
+      </div>
+      <button id="next-btn">Próxima</button>
+    </div>
+
+    <div id="result-container" style="display:none;">
+      <div id="result"></div>
+      <button id="retry-btn">Tentar novamente</button>
+    </div>
+
+    <footer>💡 Desenvolvido por <strong>Matheus R, Pietro, Luiz e Emily</strong> — 2025</footer>
+  </div>
+
+  <script>
+    const quizData = [
+      { question: "O que diferencia a biotecnologia moderna da tradicional?", options: ["O uso de microrganismos", "A aplicação de técnicas de engenharia genética", "O cultivo de plantas", "A fermentação alcoólica"], answer: 1 },
+      { question: "Qual dessas aplicações envolve o uso de DNA recombinante?", options: ["Produção de queijo", "Produção de insulina humana em bactérias", "Fermentação do vinho", "Produção de biogás"], answer: 1 },
+      { question: "A clonagem terapêutica tem como principal objetivo:", options: ["Produzir indivíduos idênticos", "Gerar tecidos ou órgãos para transplante", "Alterar o DNA de embriões", "Criar novas espécies"], answer: 1 },
+      { question: "Qual é o nome do processo que permite a transferência de genes entre espécies diferentes?", options: ["Mutação", "Transgênese", "Seleção natural", "Evolução"], answer: 1 },
+      { question: "A biotecnologia vermelha está relacionada principalmente a:", options: ["Agricultura", "Saúde e medicina", "Preservação ambiental", "Indústria de alimentos"], answer: 1 },
+      { question: "O termo 'OGM' significa:", options: ["Organismo Geneticamente Modificado", "Organismo Geral de Microrganismo", "Origem Genética Moderna", "Operação Genética Múltipla"], answer: 0 },
+      { question: "O uso de biotecnologia para tratar resíduos e poluentes é chamado de:", options: ["Biorremediação", "Bioinformática", "Fermentação", "Fotossíntese artificial"], answer: 0 },
+      { question: "A enzima DNA polimerase é fundamental para:", options: ["Replicação do DNA", "Decomposição de proteínas", "Síntese de lipídios", "Produção de energia"], answer: 0 },
+      { question: "A terapia gênica busca:", options: ["Corrigir genes defeituosos para tratar doenças", "Aumentar a inteligência humana", "Modificar plantas geneticamente", "Criar vacinas sintéticas"], answer: 0 },
+      { question: "A biotecnologia azul está relacionada ao uso de:", options: ["Recursos marinhos", "Florestas", "Minérios", "Animais terrestres"], answer: 0 }
+    ];
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next-btn");
+    const resultContainer = document.getElementById("result-container");
+    const resultEl = document.getElementById("result");
+    const retryBtn = document.getElementById("retry-btn");
+    const progressBar = document.getElementById("progress-bar");
+    const themeToggle = document.getElementById("themeToggle");
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = quizData[currentQuestion];
+      questionEl.textContent = `(${currentQuestion + 1}/${quizData.length}) ${q.question}`;
+      optionsEl.innerHTML = "";
+      q.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.classList.add("option");
+        button.textContent = option;
+        button.onclick = () => selectOption(index);
+        optionsEl.appendChild(button);
+      });
+      nextBtn.style.display = "none";
+      updateProgress();
+    }
+
+    function selectOption(index) {
+      const buttons = optionsEl.querySelectorAll(".option");
+      buttons.forEach(btn => btn.disabled = true);
+      if (index === quizData[currentQuestion].answer) {
+        buttons[index].style.background = "rgba(0,255,153,0.4)";
+        buttons[index].style.boxShadow = "0 0 15px var(--correct)";
+        score++;
+      } else {
+        buttons[index].style.background = "rgba(255,0,85,0.4)";
+        buttons[quizData[currentQuestion].answer].style.background = "rgba(0,255,153,0.4)";
+      }
+      nextBtn.style.display = "block";
+    }
+
+    function updateProgress() {
+      const progress = ((currentQuestion) / quizData.length) * 100;
+      progressBar.style.width = progress + "%";
+    }
+
+    nextBtn.onclick = () => {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) loadQuestion();
+      else showResult();
+    };
+
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      resultContainer.style.display = "block";
+      progressBar.style.width = "100%";
+      let message = score <= 5
+        ? "Você pode estudar mais sobre Biotecnologia. Continue se dedicando!"
+        : "Excelente! Você mostrou ótimo domínio sobre Biotecnologia!";
+      resultEl.innerHTML = `<p>Sua pontuação: <strong>${score}/10</strong></p><p>${message}</p>`;
+    }
+
+    retryBtn.onclick = () => {
+      currentQuestion = 0;
+      score = 0;
+      resultContainer.style.display = "none";
+      document.getElementById("quiz").style.display = "block";
+      loadQuestion();
+    };
+
+    themeToggle.onclick = () => {
+      document.body.classList.toggle("light");
+      themeToggle.textContent = document.body.classList.contains("light")
+        ? "🌙 Modo Escuro"
+        : "☀️ Modo Claro";
+    };
+
+    loadQuestion();
+  </script>
+</body>
+</html>
